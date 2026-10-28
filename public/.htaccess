@@ -1,0 +1,77 @@
+# ==============================================================================
+# Hopesera - Apache / LiteSpeed Configuration for Hostinger Single Hosting Plan
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Enforce HTTPS (Recommended for Hostinger SSL)
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # 2. Redirect legacy .html URLs to clean URLs
+  RewriteRule ^index\.html$ / [R=301,L]
+  RewriteRule ^about\.html$ /about [R=301,L]
+  RewriteRule ^vision\.html$ /vision [R=301,L]
+  RewriteRule ^products\.html$ /products [R=301,L]
+  RewriteRule ^careers\.html$ /careers [R=301,L]
+  RewriteRule ^faqs\.html$ /faqs [R=301,L]
+  RewriteRule ^contact\.html$ /contact [R=301,L]
+  RewriteRule ^privacy-policy\.html$ /privacy-policy [R=301,L]
+  RewriteRule ^terms-conditions\.html$ /terms-conditions [R=301,L]
+
+  # 3. Single Page Application (SPA) Fallback
+  # If requested resource is not an existing file or directory, route to index.html
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# ==============================================================================
+# Browser Caching & Performance Optimization
+# ==============================================================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+
+  # HTML documents (always revalidate quickly for updates)
+  ExpiresByType text/html "access plus 0 seconds"
+
+  # CSS, JavaScript
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+
+  # Media & Images
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+
+  # Web Fonts
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+</IfModule>
+
+# ==============================================================================
+# Gzip / Deflate Compression
+# ==============================================================================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+  AddOutputFilterByType DEFLATE application/javascript application/json application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ==============================================================================
+# Security Headers
+# ==============================================================================
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
